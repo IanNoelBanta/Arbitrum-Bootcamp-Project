@@ -1,27 +1,37 @@
-import { ethers } from "hardhat";
+const { ethers } = require("hardhat");
+const { expect } = require('chai');
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const [owner] = await ethers.getSigners();
+  const initialSupply = ethers.parseUnits("1000", 18);
+  const myTokenContract = await await ethers.deployContract("MyToken", [initialSupply, owner.address]);
+  await myTokenContract.waitForDeployment();
 
-  const lockedAmount = ethers.parseEther("0.001");
+  const ethAmount = ethers.parseUnits("10", 18);
+  await myTokenContract.connect(owner).mint(owner.address, ethAmount);
 
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+  const ethAmountStake = ethers.parseUnits("10", 18);
+  await myTokenContract.connect(owner).stake(ethAmountStake);
 
-  await lock.waitForDeployment();
+  const initialBalance = await myTokenContract.balanceOf(owner.address);
+  console.log("Address initial balance before withdraw:", initialBalance.toString());
 
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  const stakedBalance = await myTokenContract.getStake(owner.address);
+  console.log("Staking successful. Staked balance of Address:", stakedBalance.toString());
+
+  await new Promise(resolve => setTimeout(resolve, 10000));
+  await myTokenContract.connect(owner).withdraw();
+
+  const stakedBalanceAfterWithdrawal = await myTokenContract.getStake(owner.address);
+  console.log("Withdrawal successful. Staked balance of Address after withdrawal:", stakedBalanceAfterWithdrawal.toString())
+
+  const finalBalance = await myTokenContract.balanceOf(owner.address);
+  console.log("Address final balance after withdraw:", finalBalance.toString());
+
+  console.log(`Contract deployed to ${myTokenContract.target}`);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
+main().then(() => process.exit(0)).catch(error => {
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });

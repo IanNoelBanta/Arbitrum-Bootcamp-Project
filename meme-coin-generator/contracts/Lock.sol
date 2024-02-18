@@ -1,34 +1,47 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+contract MyToken is ERC20, Ownable {
+  mapping(address => uint256) private _stakes;
+  mapping(address => uint256) private _lastStakeTimestamp;
+  uint256 private _rewardRate = 100;
 
-    event Withdrawal(uint amount, uint when);
+  constructor(uint256 initialSupply, address initialOwner) ERC20("MyToken", "MTK") Ownable(initialOwner) {
+    _mint(initialOwner, initialSupply);
+  }
 
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
+  function mint(address account, uint256 amount) public onlyOwner {
+    _mint(account, amount);
+  }
 
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
-    }
+  function stake(uint256 amount) public {
+    require(amount > 0, "Cannot stake 0 tokens");
+    require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    _stakes[msg.sender] += amount;
+    _lastStakeTimestamp[msg.sender] = block.timestamp;
+    _transfer(msg.sender, address(this), amount);
+  }
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
+  function withdraw() public {
+    require(_stakes[msg.sender] > 0, "No staked tokens");
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+    uint256 stakedAmount = _stakes[msg.sender];
+    uint256 reward = (block.timestamp - _lastStakeTimestamp[msg.sender]) * _rewardRate;
 
-        owner.transfer(address(this).balance);
-    }
+    _stakes[msg.sender] = 0;
+    _transfer(address(this), msg.sender, stakedAmount);
+    _mint(msg.sender, reward);
+  }
+
+  function getStake(address account) public view returns (uint256) {
+    return _stakes[account];
+  }
+
+  function getLastStakeTimestamp(address account) public view returns (uint256) {
+    return _lastStakeTimestamp[account];
+  }
 }
