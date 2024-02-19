@@ -3,7 +3,7 @@ import abi from "./abi.json";
 
 export function getContract(signer: ContractRunner) {
     return new Contract(
-        "0x003aeC005598A7ee4C36DdF6C5ff7a4A8448A374", // deployed contract address
+        "0xc95A4b10B9887880588dDc8c0b48460C4b46B6aD", // deployed contract address
         abi as any,
         signer
     );

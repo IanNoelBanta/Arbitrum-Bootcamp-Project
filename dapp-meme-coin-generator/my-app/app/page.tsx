@@ -29,8 +29,8 @@ export default function Home() {
     const contract = getContract(signer);
     try {
       const tx = await contract.mint(walletKey, 1);
-      console.log(tx);
       await tx.wait();
+      console.log(tx);
       setcurrentData("Coins Minted!");
     } catch (e: any) {
       const decodedError = contract.interface.parseError(e.data);
