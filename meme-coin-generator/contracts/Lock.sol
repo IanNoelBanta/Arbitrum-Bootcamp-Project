@@ -4,17 +4,16 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract MyToken is ERC20, Ownable {
+contract ZZZ is ERC20, Ownable {
   mapping(address => uint256) private _stakes;
   mapping(address => uint256) private _lastStakeTimestamp;
   uint256 private _rewardRate = 100;
 
-  constructor(uint256 initialSupply, address initialOwner) ERC20("MyToken", "MTK") Ownable(initialOwner) {
-    _mint(initialOwner, initialSupply);
-  }
+  constructor(address initialOwner) ERC20("ZZZ", "z") Ownable(initialOwner) {}
 
   function mint(address account, uint256 amount) public onlyOwner {
-    _mint(account, amount);
+    uint256 convertedAmount = amount * 1e18;
+    _mint(account, convertedAmount);
   }
 
   function stake(uint256 amount) public {
