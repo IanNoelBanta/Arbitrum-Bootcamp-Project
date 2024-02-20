@@ -7,17 +7,21 @@ import { getContract } from "../config";
 import Image from "next/image";
 import walletConnection from "./connect";
 import startMinting from "./mint";
-/*-----------------------IMPORTS------------------------- */
+/*----------------------------------------------------------------- */
 
-/*-------------------------HOME----------------------- */
+
+/*-------------------------STATES----------------------- */
+
 export default function Home() {
   const [walletKey, setwalletKey] = useState("");
   const [currentData, setcurrentData] = useState("");
   const [isWalletConnected, setisWalletConnected] = useState(false);
-  const [mintingAmount, setMintingAmount] = useState(0);
+  const [mintingAmount, setMintingAmount] = useState<number>();
+  const [mintingAddress, setMintingAddress] = useState("");
 
+/*----------------------------------------------------------------- */
 
-  // goods na toh
+/*-------------------------WALLET CONNECTION----------------------- */
   const connectWallet = async () => {
     if (isWalletConnected){
       return;
@@ -30,23 +34,41 @@ export default function Home() {
     setwalletKey(accounts[0]);
     setisWalletConnected(true);
     setcurrentData("Wallet Connected!");
+    console.log("CONNECTED!");
   };
-
+/*-------------------------MINTING----------------------- */
   const mintCoin = async () => {
     const { ethereum } = window as any;
     const provider = new BrowserProvider(ethereum);
     const signer = await provider.getSigner();
     const contract = getContract(signer);
     try {
-      const tx = await contract.mint(walletKey, 1);
+      const tx = await contract.mint(walletKey, mintingAmount);
       await tx.wait();
       console.log(tx);
-      setcurrentData("Coins Minted!");
+      // setcurrentData(mintingAmount + " Coins Minted!");
     } catch (e: any) {
       const decodedError = contract.interface.parseError(e.data);
       alert(`Minting failed: ${decodedError?.args}`);
     }
   };
+
+  const amountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    if (!isNaN(Number(inputValue))) {
+      setMintingAmount(Number(inputValue));
+      console.log(inputValue);
+    } else {
+      setMintingAmount(undefined);
+    }
+  };
+
+  const addressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setMintingAddress(inputValue);
+    console.log(inputValue);
+  };
+/*----------------------------------------------------------------- */
 
   const stakeCoin = async () => {
     const { ethereum } = window as any;
@@ -117,8 +139,10 @@ export default function Home() {
 
 
 
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    {/* <main className="flex min-h-screen flex-col items-center justify-between p-24"> */}
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-clip-text bg-gradient-to-b from-blue-400 to-blue-600 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Ian Noel M. Banta - ABC04
@@ -143,8 +167,8 @@ export default function Home() {
         </div>
       </div>
       
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        {startMinting()}
+      <div className="">
+        {startMinting(mintingAddress, addressChange, Number(mintingAmount), amountChange)}
       </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
