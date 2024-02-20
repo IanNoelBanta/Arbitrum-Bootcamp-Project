@@ -1,6 +1,6 @@
 function StartMinting(address: string, changeAdd: Function, value: number, handleChange: Function) {
   return (
-    <div className="flex flex-col gap-4 items-center">
+    <div className="flex gap-10 items-center mb-40 mt-20">
       <input
         type="text"
         className="border rounded-md p-3 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent"
