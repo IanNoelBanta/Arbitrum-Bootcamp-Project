@@ -5,137 +5,29 @@ import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 import { getContract } from "../config";
 import Image from "next/image";
-import walletConnection from "./connect";
-import startMinting from "./mint";
-import StartStaking from "./stake";
+import WalletConnection from "./connect";
+import StartMinting from "./mint";
 
 /*----------------------------------------------------------------- */
 
 /*-------------------------STATES----------------------- */
 
 export default function Home() {
-  const [walletKey, setwalletKey] = useState("");
-  const [isWalletConnected, setisWalletConnected] = useState(false);
-  const [mintingAmount, setMintingAmount] = useState<number>();
-  const [mintingAddress, setMintingAddress] = useState("");
-  const [message, setMessage] = useState("");
   const [chosenButton, setChosenButton] = useState<number>();
 
   /*----------------------------------------------------------------- */
   const showCard = () => {
     switch (chosenButton) {
       case 0:
-        connectWallet();
-        return (
-          <div className="mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
-            <p>{message}</p>
-          </div>
-        );
+        return <WalletConnection />;
       case 1:
-        return startMinting(
-          mintingAddress,
-          addressChange,
-          Number(mintingAmount),
-          amountChange
-        );
-      // case 2:
-      //   return (
-      //     <div className="bg-green-500 p-4 rounded-lg text-white">
-      //       <p>Coins Withdrawn!</p>
-      //     </div>
-      //   );
-      // case 3:
-      //   return (
-      //     <div className="bg-green-500 p-4 rounded-lg text-white">
-      //       <p>Coins Withdrawn!</p>
-      //     </div>
-      //   );
+        return <StartMinting />;
       default:
         return (
           <div className="mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
             <p>Start by connecting your wallet</p>
           </div>
         );
-    }
-  };
-
-  /*-------------------------WALLET CONNECTION----------------------- */
-  const connectWallet = async () => {
-    if (isWalletConnected) {
-      return;
-    }
-
-    const { ethereum } = window as any;
-    const accounts = await ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    setwalletKey(accounts[0]);
-    setisWalletConnected(true);
-    setMessage("Wallet Connected!");
-    console.log("CONNECTED!");
-  };
-  /*-------------------------MINTING----------------------- */
-  const mintCoin = async () => {
-    const { ethereum } = window as any;
-    const provider = new BrowserProvider(ethereum);
-    const signer = await provider.getSigner();
-    const contract = getContract(signer);
-    try {
-      const tx = await contract.mint(walletKey, mintingAmount);
-      await tx.wait();
-      console.log(tx);
-    } catch (e: any) {
-      const decodedError = contract.interface.parseError(e.data);
-      alert(`Minting failed: ${decodedError?.args}`);
-    }
-  };
-
-  const amountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (!isNaN(Number(inputValue))) {
-      setMintingAmount(Number(inputValue));
-      console.log(inputValue);
-    } else {
-      setMintingAmount(undefined);
-    }
-  };
-
-  const addressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setMintingAddress(inputValue);
-    console.log(inputValue);
-  };
-  /*----------------------------------------------------------------- */
-
-  const stakeCoin = async () => {
-    const { ethereum } = window as any;
-    const provider = new BrowserProvider(ethereum);
-    const signer = await provider.getSigner();
-    const contract = getContract(signer);
-    try {
-      const tx = await contract.stake(walletKey, 1);
-      console.log(tx);
-      await tx.wait();
-      setMessage("Coins Staked!");
-    } catch (e: any) {
-      const decodedError = contract.interface.parseError(e.data);
-      alert(`Staking failed: ${decodedError?.args}`);
-    }
-  };
-
-  const withdrawCoin = async () => {
-    const { ethereum } = window as any;
-    const provider = new BrowserProvider(ethereum);
-    const signer = await provider.getSigner();
-    const contract = getContract(signer);
-    try {
-      const tx = await contract.withdraw(walletKey);
-      console.log(tx);
-      await tx.wait();
-      setMessage("Coins Withdrawn!");
-    } catch (e: any) {
-      const decodedError = contract.interface.parseError(e.data);
-      alert(`Withdrawal failed: ${decodedError?.args}`);
     }
   };
 
@@ -167,15 +59,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="">
-            {showCard()}
-            {/* {startMinting(
-            mintingAddress,
-            addressChange,
-            Number(mintingAmount),
-            amountChange
-          )} */}
-          </div>
+          <div className="">{showCard()}</div>
 
           <div></div>
 
@@ -218,11 +102,12 @@ export default function Home() {
               </p>
             </a>
 
+            {/* 
             <a
               className="group rounded-lg border border-transparent px-5 py-4 transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={stakeCoin}
+              // onClick={stakeCoin}
             >
               <h2
                 className={`mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500`}
@@ -241,7 +126,7 @@ export default function Home() {
               className="group rounded-lg border border-transparent px-5 py-4 transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={withdrawCoin}
+              // onClick={withdrawCoin}
             >
               <h2
                 className={`mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500`}
@@ -254,7 +139,7 @@ export default function Home() {
               <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
                 Go home and take your coins!
               </p>
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

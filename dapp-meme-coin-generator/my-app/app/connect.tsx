@@ -1,15 +1,23 @@
-function walletConnection (isConnected: boolean) {
-    var connectionStatus = "Connect your Wallet";
+/*-----------------------IMPORTS------------------------- */
+import { useEffect, useState } from "react";
 
-    if (isConnected) {
-        connectionStatus = "Wallet Connected!";
-    }
-    
-    return (
-        <main className="mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
-            <h1 className="text-4xl font-bold">{connectionStatus}</h1>
-        </main>
-    );    
+function WalletConnection() {
+    const [walletKey, setWalletKey] = useState("");
+
+  const connectWallet = async () => {
+    const { ethereum } = window as any;
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    setWalletKey(accounts[0]);
+    console.log(walletKey);
+  };
+
+  return (
+    <main className="mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
+      <button onClick={connectWallet}>CLICK ME TO CONNECT GAGO</button>
+    </main>
+  );
 }
 
-export default walletConnection;
+export default WalletConnection;
