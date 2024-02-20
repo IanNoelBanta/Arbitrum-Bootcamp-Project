@@ -1,4 +1,4 @@
-export default function walletConnection (isConnected: boolean) {
+function walletConnection (isConnected: boolean) {
     var connectionStatus = "Connect your Wallet";
 
     if (isConnected) {
@@ -11,3 +11,5 @@ export default function walletConnection (isConnected: boolean) {
         </main>
     );    
 }
+
+export default walletConnection;
