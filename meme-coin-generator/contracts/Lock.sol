@@ -11,7 +11,7 @@ contract ZZZ is ERC20, Ownable {
 
   constructor(address initialOwner) ERC20("ZZZ", "z") Ownable(initialOwner) {}
 
-  function mint(address account, uint256 amount) public onlyOwner {
+  function mint(address account, uint256 amount) public {
     uint256 convertedAmount = amount * 1e18;
     _mint(account, convertedAmount);
   }
