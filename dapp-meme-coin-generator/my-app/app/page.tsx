@@ -7,6 +7,8 @@ import { getContract } from "../config";
 import Image from "next/image";
 import WalletConnection from "./connect";
 import StartMinting from "./mint";
+import StartStaking from "./stake";
+import StartWithdrawing from "./withdraw";
 
 /*----------------------------------------------------------------- */
 
@@ -22,9 +24,21 @@ export default function Home() {
         return <WalletConnection />;
       case 1:
         return <StartMinting />;
+      case 2:
+        return <StartStaking />;
+      case 3:
+        return <StartWithdrawing />;
       default:
         return (
-          <div className="mb-20 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
+          <div
+            className="mb-20 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
             <p>Start by connecting your wallet</p>
           </div>
         );
@@ -34,8 +48,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gradient-to-br from-pink-900 to-blue-900 overflow-hidden">
       <div className="flex-col items-center justify-between rounded-lg px-5 py-5 bg-gray-900 transition-all duration-300 hover:shadow-lg hover:border-transparent hover:bg-transparent hover:dark:border-neutral-700 hover:dark:bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500 flex-grow">
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex mb-20">
+        <div className="flex flex-col items-center justify-center w-full h-full border">
+          <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex border mb-10">
             <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-clip-text bg-gradient-to-b from-blue-400 to-blue-600 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
               Ian Noel M. Banta - ABC04
             </p>
@@ -59,9 +73,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mb-40 mt-40 flex flex-wrap max-w-full min-h-0">{showCard()}</div>
+          <div className="mb-40 mt-40">{showCard()}</div>
 
-          <div className="mt-30 flex grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+          <div className="mt-40 flex grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left border">
             <a
               className="group rounded-lg border border-transparent px-5 py-4 transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
               target="_blank"
@@ -100,12 +114,11 @@ export default function Home() {
               </p>
             </a>
 
-            {/* 
             <a
               className="group rounded-lg border border-transparent px-5 py-4 transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
               target="_blank"
               rel="noopener noreferrer"
-              // onClick={stakeCoin}
+              onClick={() => setChosenButton(2)}
             >
               <h2
                 className={`mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500`}
@@ -124,7 +137,7 @@ export default function Home() {
               className="group rounded-lg border border-transparent px-5 py-4 transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
               target="_blank"
               rel="noopener noreferrer"
-              // onClick={withdrawCoin}
+              onClick={() => setChosenButton(3)}
             >
               <h2
                 className={`mb-3 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500`}
@@ -137,7 +150,7 @@ export default function Home() {
               <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
                 Go home and take your coins!
               </p>
-            </a> */}
+            </a>
           </div>
         </div>
       </div>

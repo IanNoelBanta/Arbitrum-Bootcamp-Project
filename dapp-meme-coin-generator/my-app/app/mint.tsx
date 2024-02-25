@@ -43,7 +43,12 @@ function StartMinting() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col border" style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+    }}>
       <div className="flex space-x-10">
         <input
           type="text"
