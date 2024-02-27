@@ -4,11 +4,11 @@ import { getContract } from "../config";
 
 function StartMinting() {
   const [mintingWalletKey, setMintingWalletKey] = useState("");
-  const [mintingAmount, setMintingAmount] = useState<number>();
+  const [mintingAmount, setMintingAmount] = useState<number>(0);
   const [mintingAddress, setMintingAddress] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const CONTRACT_ADDRESS = "0x201D78b9D04a14e572fa6416765e097b8A92e01D";
+  const CONTRACT_ADDRESS = "0x4C9A09fD8C1A43e3444587D549BcfD162E5D2bB3";
 
   const mintCoin = async () => {
     const { ethereum } = window as any;
@@ -31,7 +31,7 @@ function StartMinting() {
       setMintingAmount(Number(inputValue));
       console.log(inputValue);
     } else {
-      setMintingAmount(undefined);
+      setMintingAmount(0);
     }
   };
 
@@ -43,7 +43,7 @@ function StartMinting() {
   };
 
   return (
-    <div className="flex flex-col border" style={{
+    <div className="flex flex-col border border-solid border-sky-400 rounded-lg p-5" style={{
       position: "absolute",
       top: "50%",
       left: "50%",
@@ -76,7 +76,7 @@ function StartMinting() {
         </button>
       </div>
 
-      <div className="mt-5 mb-4">
+      <div className="mt-5">
         {submitted && (
           <div className="text-center">
             <p className="italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">Minting successful!</p>
